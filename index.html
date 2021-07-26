@@ -36,13 +36,13 @@
 <!--<button onclick="startQuiz()">Start quiz</button>-->
 
 
-<img src="img.jpg" alt="Normal MRI" id="randImage">
-<button class="showCoordinates">Show saved coordinates</button>
-<button class="saveCoordinates">Save coordinates in DB</button>
+<img src="img.jpg" alt="Normal MRI" id="randImage" style="width:400px;">
+<!--<button class="showCoordinates">Show saved coordinates</button>-->
+<button class="saveCoordinates">Finish question</button>
 
 
 <script type="text/javascript">
-//$(document).ready( 
+//$(document).ready(
   var arrayOfXY = new Array();
   $("#randImage").click(function(e) {
           var offset = $(this).offset();
@@ -64,7 +64,7 @@
 
   $(".saveCoordinates").on("click",function() {
       $.ajax({
-          url: "Ur url",
+          url: "https://yucca.bazlov.uk/tn/rec_clickdata.php",
           type:"POST",
           data: {coordinates:arrayOfXY},
           success:function(data){
