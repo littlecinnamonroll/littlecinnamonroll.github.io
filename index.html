@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <title>ISSI Kalchenko Lab Quiz!</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -7,63 +7,81 @@
 <body>
   <div id="git"></div>
   <script>
-      (async () => {
-        const response = await fetch('https://api.github.com/repos/littlecinnamonroll/littlecinnamonroll.github.io/Question_1/contents/');
-        const data = await response.json();
-        let htmlString = '<ul>';
-        for (let file of data) {
-          htmlString += `<li><a href="${file.path}">${file.name}</a></li>`;
+    async function load_images() {
+      const fetch_url = 'https://api.github.com/repos/littlecinnamonroll/littlecinnamonroll.github.io/git/trees/master?recursive=1';
+      ImageArray = new Array();
+      const response = await fetch(fetch_url);
+      const data = await response.json();
+      console.log("data:"+JSON.stringify(data));
+      for (let file of data.tree) {
+          //htmlString += `<li><a href="${file.path}">${file.path}</a></li>`;
+        if (file.path.startsWith("Question_1/") && file.path.endsWith("g")){
+            ImageArray.push(file.path);
+            console.log("Pushed "+file.path+" into ImageArray")
         }
-        htmlString += '</ul>';
-        document.getElementById('git').innerHTML = htmlString;
-      })()
-    </script>
-<script type="text/javascript"> alert("Welcome to the quiz homepage"); </script>
+      }
+    }
+    function getRandomImage() {
+        var num = Math.floor( Math.random() * ImageArray.length);
+        var img = ImageArray[num];
+        document.getElementById("randImage").src = img
+    }
+  </script>
+<script type="text/javascript">
+  //alert("Welcome to the quiz homepage");
+</script>
 <h1>Take the imaging quiz</h1>
 
 <p>Press the button below to start the quiz!</p>
 <!--<button onclick="startQuiz()">Start quiz</button>-->
 
 
- <script type="text/javascript">
-$(document).ready(function() {
-    var arrayOfXY = new Array();
-    $('img').click(function(e) {
-        var offset = $(this).offset();
-        var xPoint = e.pageX - offset.left;
-        var yPoint = e.pageY - offset.top;
-        arrayOfXY.push({imgurl: $(this).attr("src"), x:xPoint, y:yPoint});
-    });
-
-    $(".showCoordinates").on("click",function() {
-        for (var i = 0; i < arrayOfXY.length; i++) {
-            var imgurl = arrayOfXY[i].imgurl;
-            var x = arrayOfXY[i].x;
-            var y = arrayOfXY[i].y;
-            alert("ingurl:"+imgurl+"x axis:"+x+" and y axis:"+y);
-            console.log("x axis:"+x+" and y axis:"+y);
-        }
-    });
-
-    $(".saveCoordinates").on("click",function() {
-        $.ajax({
-            url: "Ur url",
-            type:"POST",
-            data: {coordinates:arrayOfXY},
-            success:function(data){
-              alert("Success");
-            },
-            error: function(){
-              alert("ERROR");
-            }
-        });
-    });
-});
-</script>
-
-<img src="MRI.jpeg" alt="Normal MRI">
+<img src="img.jpg" alt="Normal MRI" id="randImage">
 <button class="showCoordinates">Show saved coordinates</button>
 <button class="saveCoordinates">Save coordinates in DB</button>
 
+
+<script type="text/javascript">
+//$(document).ready( 
+  var arrayOfXY = new Array();
+  $("#randImage").click(function(e) {
+          var offset = $(this).offset();
+          var xPoint = e.pageX - offset.left;
+          var yPoint = e.pageY - offset.top;
+          arrayOfXY.push({imgurl: $(this).attr("src"), x:xPoint, y:yPoint});
+  });
+
+  $(".showCoordinates").on("click",function() {
+      console.log("showCoordinates pressed, arrayOfXY.length is "+arrayOfXY.length);
+      for (var i = 0; i < arrayOfXY.length; i++) {
+          var imgurl = arrayOfXY[i].imgurl;
+          var x = arrayOfXY[i].x;
+          var y = arrayOfXY[i].y;
+          alert("ingurl:"+imgurl+" x axis:"+x+" and y axis:"+y);
+          console.log("x axis:"+x+" and y axis:"+y);
+      }
+  });
+
+  $(".saveCoordinates").on("click",function() {
+      $.ajax({
+          url: "Ur url",
+          type:"POST",
+          data: {coordinates:arrayOfXY},
+          success:function(data){
+            alert("Success");
+          },
+          error: function(){
+            alert("ERROR");
+          }
+      });
+  });
+(async () => {
+
+  await load_images();
+  console.log(ImageArray);
+
+  getRandomImage();
+})();
+</script>
 </body>
 </html>
