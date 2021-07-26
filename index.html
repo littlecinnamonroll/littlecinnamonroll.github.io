@@ -10,29 +10,39 @@
     async function load_images() {
       const fetch_url = 'https://api.github.com/repos/littlecinnamonroll/littlecinnamonroll.github.io/git/trees/master?recursive=1';
       ImageArray = new Array();
+      QuestionNamesObj = new Object();
       const response = await fetch(fetch_url);
       const data = await response.json();
-      console.log("data:"+JSON.stringify(data));
+      //console.log("data:"+JSON.stringify(data));
       for (let file of data.tree) {
           //htmlString += `<li><a href="${file.path}">${file.path}</a></li>`;
+        if (file.path.startsWith("Question_")) {
+          var qname = file.path.split("/")[0];
+          QuestionNamesObj[qname]=1;
+        }
         if (file.path.startsWith("Question_1/") && file.path.endsWith("g")){
             ImageArray.push(file.path);
-            console.log("Pushed "+file.path+" into ImageArray")
+            //console.log("Pushed "+file.path+" into ImageArray")
         }
       }
+      QuestionNames = new Array();
+      for(var q in QuestionNamesObj) { QuestionNames.push(q); }
+      QuestionNames.sort();
       //QuestionArray = new Array("Question_2", "Question_3", "Question_4", "Question_5");
       ArrayOfArrays = new Array();
-      QuestionNames = new Object();
       for (let mainimg of ImageArray) {
-        console.log("Processing "+mainimg)
+        //console.log("Processing "+mainimg)
         ArrayOfArrays[mainimg] = new Object();
+        for (let q of QuestionNames) {
+          ArrayOfArrays[mainimg][q] = new Array();
+        }
+        ArrayOfArrays[mainimg]["Question_1"].push(mainimg);
         const mainimgbase = (mainimg.split(".")[0]).split("/")[1] + "-";
-        console.log("mainimgbase = "+mainimgbase)
+        //console.log("mainimgbase = "+mainimgbase)
         for (let file of data.tree) {
           if (file.path.includes(mainimgbase)) {
               var qname = file.path.split("/")[0];
-              QuestionNames[qname] = 1;
-              ArrayOfArrays[mainimg][qname] = file.path;
+              ArrayOfArrays[mainimg][qname].push(file.path);
               //console.log("Pushed "+file.path+" into ArrayOfArrays[" + mainimg + "]");
           } else {
                 //console.log("Not pushing"+file.path);
@@ -41,9 +51,15 @@
         console.log(ArrayOfArrays[mainimg])
       }
     }
-    function getRandomImage() {
-        var num = Math.floor( Math.random() * ImageArray.length);
-        var img = "https://littlecinnamonroll.github.io/" + ImageArray[num];
+    var MainImage;
+    function chooseMainImage() {
+      var num = Math.floor( Math.random() * ImageArray.length);
+      MainImage = ImageArray[num];
+    }
+
+    function getRandomImage(arr) {
+        var num = Math.floor( Math.random() * arr.length);
+        var img = "https://littlecinnamonroll.github.io/" + arr[num];
         document.getElementById("randImage").src = img
     }
   </script>
@@ -72,7 +88,7 @@
   });
 
   $(".showCoordinates").on("click",function() {
-      console.log("showCoordinates pressed, arrayOfXY.length is "+arrayOfXY.length);
+      //console.log("showCoordinates pressed, arrayOfXY.length is "+arrayOfXY.length);
       for (var i = 0; i < arrayOfXY.length; i++) {
           var imgurl = arrayOfXY[i].imgurl;
           var x = arrayOfXY[i].x;
@@ -97,9 +113,20 @@
 (async () => {
 
   await load_images();
-  console.log(ImageArray);
+  //console.log(ImageArray);
+  chooseMainImage();
+  // this initializes the MainImage variable
+  
+  // NOW: iterate over QuestionNames
+  // For each question name (Question X):
+  // // load the array of images subordinate to the MainImage and labelled QUestion X
+  // // from this array, pick one image at random
+  // // interact with the responder
+  // // save click coordinates together with the image name (and question name)
+  // Finish the survey by POSTing all the saved data
 
-  getRandomImage();
+
+  //getRandomImage(ImageArray);
 })();
 </script>
 </body>
