@@ -60,15 +60,15 @@
     }
   }
   const quizlength = QuestionNames.length;
-  var qnum;
+  var qnum = 0;
   function chooseMainImage() {
       console.log("choosemainimage called, ImageArray is "+ImageArray)
       var num = Math.floor( Math.random() * ImageArray.length);
       MainImage = ImageArray[num];
       console.log("MainImage is "+MainImage)
       MainImageFiles = ArrayOfArrays[MainImage];
-      console.log("MainImageFIles is "+MainImageFiles)
-      qnum = 0;
+      ArrayOfArrays.filter(item => item !== MainImageFiles)
+      console.log("MainImageFiles is "+MainImageFiles)
   }
 
   function getRandomImage(arr) {
@@ -79,6 +79,7 @@
   }
 
   function displayTitle() {
+    chooseMainImage();
     $("#beginQuiz").hide();
     $(".displayTitle").text("Next Question");
     $(".logCoordinates").show();
@@ -155,7 +156,7 @@
 (async () => {
   //console.log(ImageArray);
   await load_images();
-  chooseMainImage();
+  //chooseMainImage();
   // this initializes the MainImage variable
 
   // NOW: iterate over QuestionNames
