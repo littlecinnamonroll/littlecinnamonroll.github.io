@@ -20,6 +20,18 @@
             console.log("Pushed "+file.path+" into ImageArray")
         }
       }
+      //QuestionArray = new Array("Question_2", "Question_3", "Question_4", "Question_5");
+      ArrayOfArrays = new Array();
+      for (let mainimg of ImageArray) {
+        ArrayOfArrays[mainimg] = new Array();
+        const mainimgbase = mainimg.split(".")[0] + "-";
+        for (let file of data.tree) {
+          if (file.path.includes(mainimgbase)) {
+              ArrayOfArrays[mainimg].push(file.path);
+              console.log("Pushed "+file.path+" into ArrayOfArrays[" + mainimg + "]");
+          } else { console.log("Not pushing"+file.path);}
+        }
+      }
     }
     function getRandomImage() {
         var num = Math.floor( Math.random() * ImageArray.length);
