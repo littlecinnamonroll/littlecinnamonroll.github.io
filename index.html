@@ -22,15 +22,23 @@
       }
       //QuestionArray = new Array("Question_2", "Question_3", "Question_4", "Question_5");
       ArrayOfArrays = new Array();
+      QuestionNames = new Object();
       for (let mainimg of ImageArray) {
-        ArrayOfArrays[mainimg] = new Array();
-        const mainimgbase = mainimg.split(".")[0] + "-";
+        console.log("Processing "+mainimg)
+        ArrayOfArrays[mainimg] = new Object();
+        const mainimgbase = (mainimg.split(".")[0]).split("/")[1] + "-";
+        console.log("mainimgbase = "+mainimgbase)
         for (let file of data.tree) {
           if (file.path.includes(mainimgbase)) {
-              ArrayOfArrays[mainimg].push(file.path);
-              console.log("Pushed "+file.path+" into ArrayOfArrays[" + mainimg + "]");
-          } else { console.log("Not pushing"+file.path);}
+              var qname = file.path.split("/")[0];
+              QuestionNames[qname] = 1;
+              ArrayOfArrays[mainimg][qname] = file.path;
+              //console.log("Pushed "+file.path+" into ArrayOfArrays[" + mainimg + "]");
+          } else {
+                //console.log("Not pushing"+file.path);
+              }
         }
+        console.log(ArrayOfArrays[mainimg])
       }
     }
     function getRandomImage() {
