@@ -1,84 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>ISSI Kalchenko Lab Quiz!</title>
+  <title>ISSI Kalchenko Lab Quiz</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 </head>
 <body>
-  <div id="git"></div>
-  <script>
-    async function load_images() {
-      const fetch_url = 'https://api.github.com/repos/littlecinnamonroll/littlecinnamonroll.github.io/git/trees/master?recursive=1';
-      ImageArray = new Array();
-      QuestionNamesObj = new Object();
-      const response = await fetch(fetch_url);
-      const data = await response.json();
-      //console.log("data:"+JSON.stringify(data));
-      for (let file of data.tree) {
-          //htmlString += `<li><a href="${file.path}">${file.path}</a></li>`;
-        if (file.path.startsWith("Question_")) {
-          var qname = file.path.split("/")[0];
-          QuestionNamesObj[qname]=1;
-        }
-        if (file.path.startsWith("Question_1/") && file.path.endsWith("g")){
-            ImageArray.push(file.path);
-            //console.log("Pushed "+file.path+" into ImageArray")
-        }
+<div id="git"></div>
+<script>
+  var QuestionNames = new Array();
+  var ImageArray = new Array();
+  console.log("ImageArray is "+ImageArray)
+
+  var QuestionNamesObj = new Object();
+  var ArrayOfArrays = new Array();
+  let MainImage = "qq";
+  var MainImageFiles = new Object();
+  var DataToSubmit = new Array();
+
+  async function load_images() {
+
+    const fetch_url = 'https://api.github.com/repos/littlecinnamonroll/littlecinnamonroll.github.io/git/trees/master?recursive=1';
+    const response = await fetch(fetch_url);
+    const data = await response.json();
+    //console.log("data:"+JSON.stringify(data));
+    for (let file of data.tree) {
+        //htmlString += `<li><a href="${file.path}">${file.path}</a></li>`;
+      if (file.path.startsWith("Question_")) {
+        var qname = file.path.split("/")[0];
+        QuestionNamesObj[qname]=1;
       }
-      QuestionNames = new Array();
-      for(var q in QuestionNamesObj) { QuestionNames.push(q); }
-      QuestionNames.sort();
-      //QuestionArray = new Array("Question_2", "Question_3", "Question_4", "Question_5");
-      ArrayOfArrays = new Array();
-      for (let mainimg of ImageArray) {
-        //console.log("Processing "+mainimg)
-        ArrayOfArrays[mainimg] = new Object();
-        for (let q of QuestionNames) {
-          ArrayOfArrays[mainimg][q] = new Array();
-        }
-        ArrayOfArrays[mainimg]["Question_1"].push(mainimg);
-        const mainimgbase = (mainimg.split(".")[0]).split("/")[1] + "-";
-        //console.log("mainimgbase = "+mainimgbase)
-        for (let file of data.tree) {
-          if (file.path.includes(mainimgbase)) {
-              var qname = file.path.split("/")[0];
-              ArrayOfArrays[mainimg][qname].push(file.path);
-              //console.log("Pushed "+file.path+" into ArrayOfArrays[" + mainimg + "]");
-          } else {
-                //console.log("Not pushing"+file.path);
-              }
-        }
-        console.log(ArrayOfArrays[mainimg])
+      if (file.path.startsWith("Question_1/") && file.path.endsWith("g")){
+          ImageArray.push(file.path);
+          //console.log("Pushed "+file.path+" into ImageArray")
       }
     }
-    var MainImage;
-    function chooseMainImage() {
+    for(var q in QuestionNamesObj) { QuestionNames.push(q); }
+    QuestionNames.sort();
+    //QuestionArray = new Array("Question_2", "Question_3", "Question_4", "Question_5");
+    for (let mainimg of ImageArray) {
+      //console.log("Processing "+mainimg)
+      ArrayOfArrays[mainimg] = new Object();
+      for (let q of QuestionNames) {
+        ArrayOfArrays[mainimg][q] = new Array();
+      }
+      ArrayOfArrays[mainimg]["Question_1"].push(mainimg);
+      const mainimgbase = (mainimg.split(".")[0]).split("/")[1] + "-";
+      //console.log("mainimgbase = "+mainimgbase)
+      for (let file of data.tree) {
+        if (file.path.includes(mainimgbase)) {
+            var qname = file.path.split("/")[0];
+            ArrayOfArrays[mainimg][qname].push(file.path);
+            //console.log("Pushed "+file.path+" into ArrayOfArrays[" + mainimg + "]");
+        }
+        else {
+                //console.log("Not pushing"+file.path);
+        }
+      }
+      console.log(ArrayOfArrays[mainimg])
+    }
+  }
+  const quizlength = QuestionNames.length;
+  var qnum;
+  function chooseMainImage() {
+      console.log("choosemainimage called, ImageArray is "+ImageArray)
       var num = Math.floor( Math.random() * ImageArray.length);
       MainImage = ImageArray[num];
-    }
+      console.log("MainImage is "+MainImage)
+      MainImageFiles = ArrayOfArrays[MainImage];
+      console.log("MainImageFIles is "+MainImageFiles)
+      qnum = 0;
+  }
 
-    function getRandomImage(arr) {
-        var num = Math.floor( Math.random() * arr.length);
-        var img = "https://littlecinnamonroll.github.io/" + arr[num];
-        document.getElementById("randImage").src = img
+  function getRandomImage(arr) {
+      var num = Math.floor( Math.random() * arr.length);
+      var img = "https://littlecinnamonroll.github.io/" + arr[num];
+      document.getElementById("randImage").src = img
+  }
+
+  function displayTitle() {
+    console.log("funct diplayTitle coalled");
+    $("#QuestionTitle").text("Question "+(qnum+1));
+    getRandomImage(MainImageFiles[QuestionNames[qnum]]);
+    qnum++;
+    if (qnum == 5) {$(".displayTitle").hide();
+      $(".sendCoordinates").show()};
+        //h.appendChild(t);
+        //document.body.removeChild(child);
+        //document.body.appendChild(h);
     }
-  </script>
+</script>
 <script type="text/javascript">
   //alert("Welcome to the quiz homepage");
 </script>
-<h1>Take the imaging quiz</h1>
-
-<p>Press the button below to start the quiz!</p>
+<h1>Take the imaging quiz!</h1>
+<h2 id="QuestionTitle">:)</h2>
+<p>Press the "Next question" button below to start the quiz, and move to the next question.</p>
+<p> If you can spot an abnormality, click on the image and then on "Save Coordinates".
+  Only the last click before pressing the button will be saved, but you can save more than
+  one pair of coordinates per question. When you are finished, you can move on.
+  If you don't think there are any abnormalities visible then simply skip to the next question.</p>
 <!--<button onclick="startQuiz()">Start quiz</button>-->
 
 
-<img src="img.jpg" alt="Normal MRI" id="randImage" style="width:400px;">
-<!--<button class="showCoordinates">Show saved coordinates</button>-->
-<button class="saveCoordinates">Finish question</button>
+<img src="img.jpg" alt="The image goes here." id="randImage" style="height:500px;">
+<button class="logCoordinates">Save coordinates</button>
+<button class="displayTitle">Next question</button>
+<button class="sendCoordinates">Finish quiz</button>
 
 
 <script type="text/javascript">
 //$(document).ready(
+  $(".sendCoordinates").hide();
   var arrayOfXY = new Array();
   $("#randImage").click(function(e) {
           var offset = $(this).offset();
@@ -86,46 +118,47 @@
           var yPoint = e.pageY - offset.top;
           arrayOfXY.push({imgurl: $(this).attr("src"), x:xPoint, y:yPoint});
   });
+  $(".displayTitle").on("click", displayTitle);
 
-  $(".showCoordinates").on("click",function() {
-      //console.log("showCoordinates pressed, arrayOfXY.length is "+arrayOfXY.length);
-      for (var i = 0; i < arrayOfXY.length; i++) {
-          var imgurl = arrayOfXY[i].imgurl;
-          var x = arrayOfXY[i].x;
-          var y = arrayOfXY[i].y;
-          alert("ingurl:"+imgurl+" x axis:"+x+" and y axis:"+y);
-          console.log("x axis:"+x+" and y axis:"+y);
-      }
+  $(".logCoordinates").on("click",function() {
+      //console.log("logCoordinates pressed, arrayOfXY.length is "+arrayOfXY.length);
+      var i = arrayOfXY.length-1;
+      var imgurl = arrayOfXY[i].imgurl;
+      var x = arrayOfXY[i].x;
+      var y = arrayOfXY[i].y;
+      //alert("ingurl:"+imgurl+" x axis:"+x+" and y axis:"+y);
+      console.log("x axis:"+x+" and y axis:"+y);
+      DataToSubmit.push({imgurl:imgurl, x:x, y:y})
   });
 
-  $(".saveCoordinates").on("click",function() {
+  $(".sendCoordinates").on("click",function() {
 //      $.ajax({
         $.post(
           "https://yucca.bazlov.uk/tn/rec_clickdata.php",
-          JSON.stringify(arrayOfXY[arrayOfXY.length-1])
+          JSON.stringify(DataToSubmit)
         ).success(function(data){
-            alert("Success");
+            alert("Thank you for taking the quiz! Your data has been submitted.");
           }).fail(function(data){
             alert("ERROR");
           }
       );
   });
-(async () => {
 
-  await load_images();
+
+(async () => {
   //console.log(ImageArray);
+  await load_images();
   chooseMainImage();
   // this initializes the MainImage variable
-  
+
   // NOW: iterate over QuestionNames
   // For each question name (Question X):
-  // // load the array of images subordinate to the MainImage and labelled QUestion X
+  // // load the array of images subordinate to the MainImage and labelled Question X
   // // from this array, pick one image at random
   // // interact with the responder
   // // save click coordinates together with the image name (and question name)
   // Finish the survey by POSTing all the saved data
-
-
+  //for (let question in MainImageFiles)
   //getRandomImage(ImageArray);
 })();
 </script>
