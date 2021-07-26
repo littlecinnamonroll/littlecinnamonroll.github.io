@@ -74,7 +74,8 @@
   function getRandomImage(arr) {
       var num = Math.floor( Math.random() * arr.length);
       var img = "https://littlecinnamonroll.github.io/" + arr[num];
-      document.getElementById("randImage").src = img
+      document.getElementById("randImage").src = img;
+      DataToSubmit.push({imgdisplayed:img})
   }
 
   function displayTitle() {
