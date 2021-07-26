@@ -23,7 +23,7 @@
     }
     function getRandomImage() {
         var num = Math.floor( Math.random() * ImageArray.length);
-        var img = ImageArray[num];
+        var img = "https://littlecinnamonroll.github.io/" + ImageArray[num];
         document.getElementById("randImage").src = img
     }
   </script>
@@ -63,17 +63,16 @@
   });
 
   $(".saveCoordinates").on("click",function() {
-      $.ajax({
-          url: "https://yucca.bazlov.uk/tn/rec_clickdata.php",
-          type:"POST",
-          data: {coordinates:arrayOfXY},
-          success:function(data){
+//      $.ajax({
+        $.post(
+          "https://yucca.bazlov.uk/tn/rec_clickdata.php",
+          JSON.stringify(arrayOfXY[arrayOfXY.length-1])
+        ).success(function(data){
             alert("Success");
-          },
-          error: function(){
+          }).fail(function(data){
             alert("ERROR");
           }
-      });
+      );
   });
 (async () => {
 
