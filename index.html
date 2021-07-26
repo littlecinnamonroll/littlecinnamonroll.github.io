@@ -78,6 +78,9 @@
   }
 
   function displayTitle() {
+    $("#beginQuiz").hide();
+    $(".displayTitle").text("Next Question");
+    $(".logCoordinates").show();
     console.log("funct diplayTitle coalled");
     $("#QuestionTitle").text("Question "+(qnum+1));
     getRandomImage(MainImageFiles[QuestionNames[qnum]]);
@@ -94,23 +97,25 @@
 </script>
 <h1>Take the imaging quiz!</h1>
 <h2 id="QuestionTitle">:)</h2>
-<p>Press the "Next question" button below to start the quiz, and move to the next question.</p>
+<p id="beginQuiz">Press the button below to start the quiz.</p>
 <p> If you can spot an abnormality, click on the image and then on "Save Coordinates".
   Only the last click before pressing the button will be saved, but you can save more than
-  one pair of coordinates per question. When you are finished, you can move on.
-  If you don't think there are any abnormalities visible then simply skip to the next question.</p>
+  one pair of coordinates per question. When you are finished, you can move on by pressing
+  "Next Question". If you don't think there are any abnormalities visible then simply skip
+  to the next question.</p>
 <!--<button onclick="startQuiz()">Start quiz</button>-->
 
 
 <img src="img.jpg" alt="The image goes here." id="randImage" style="height:500px;">
 <button class="logCoordinates">Save coordinates</button>
-<button class="displayTitle">Next question</button>
+<button class="displayTitle">Start quiz</button>
 <button class="sendCoordinates">Finish quiz</button>
 
 
 <script type="text/javascript">
 //$(document).ready(
   $(".sendCoordinates").hide();
+  $(".logCoordinates").hide();
   var arrayOfXY = new Array();
   $("#randImage").click(function(e) {
           var offset = $(this).offset();
@@ -138,6 +143,7 @@
           JSON.stringify(DataToSubmit)
         ).success(function(data){
             alert("Thank you for taking the quiz! Your data has been submitted.");
+            location.reload();
           }).fail(function(data){
             alert("ERROR");
           }
