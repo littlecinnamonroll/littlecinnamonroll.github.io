@@ -107,28 +107,30 @@
   to the next question.</p>
 <!--<button onclick="startQuiz()">Start quiz</button>-->
 
-
-<img src="img.jpg" alt="The image goes here." id="randImage" style="height:500px;">
 <button class="logCoordinates">Save coordinates</button>
 <button class="displayTitle">Start quiz</button>
 <button class="sendCoordinates">Finish quiz</button>
-
+<p id="clickRegistered">Click saved!</p>
+<div><img src="img.jpg" alt="The image goes here." id="randImage" style="height:500px;"></div>
 
 <script type="text/javascript">
 //$(document).ready(
+  $("#clickRegistered").hide();
   $(".sendCoordinates").hide();
   $(".logCoordinates").hide();
   var arrayOfXY = new Array();
   $("#randImage").click(function(e) {
-          var offset = $(this).offset();
-          var xPoint = e.pageX - offset.left;
-          var yPoint = e.pageY - offset.top;
-          arrayOfXY.push({imgurl: $(this).attr("src"), x:xPoint, y:yPoint});
+    $("#clickRegistered").hide();
+    var offset = $(this).offset();
+    var xPoint = e.pageX - offset.left;
+    var yPoint = e.pageY - offset.top;
+    arrayOfXY.push({imgurl: $(this).attr("src"), x:xPoint, y:yPoint});
   });
   $(".displayTitle").on("click", displayTitle);
 
   $(".logCoordinates").on("click",function() {
       //console.log("logCoordinates pressed, arrayOfXY.length is "+arrayOfXY.length);
+      $("#clickRegistered").show();
       var i = arrayOfXY.length-1;
       var imgurl = arrayOfXY[i].imgurl;
       var x = arrayOfXY[i].x;
